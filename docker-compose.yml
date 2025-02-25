@@ -1,0 +1,10 @@
+services:
+  django_backend:
+    build: ./
+    container_name: face_recognition_django
+    volumes:
+      - ./:/code  # Maps the host's ./server directory to /code in the container
+      - ./staticfiles:/code/staticfiles
+    ports:
+      - "8002:8000"
+    restart: always
