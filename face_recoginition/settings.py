@@ -126,3 +126,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 LOGIN_URL = ""
+
+
+STATIC_URL = '/static/'
+import os
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "student/static")]
+
