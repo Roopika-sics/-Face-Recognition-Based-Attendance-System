@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost','127.0.0.1','0.0.0.0','python.sicsglobal.com',]
 
-FORCE_SCRIPT_NAME = '/face_recognition_based_attendance_system'
+FORCE_SCRIPT_NAME = '/face_recognition_attendance_system'
 # Application definition
 
 INSTALLED_APPS = [
@@ -119,6 +119,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Directory for collected static files
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "student/static")]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -127,11 +128,4 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 LOGIN_URL = ""
-
-
-STATIC_URL = '/static/'
-import os
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "student/static")]
-
