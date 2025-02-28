@@ -5,3 +5,6 @@ def student_register(request):
 
 def student_login(request):
     return render(request,'student/login.html')
+
+def student_landing_page(request):
+    return render(request,'student/student_landing.html')
