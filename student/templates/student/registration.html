@@ -25,12 +25,14 @@
       <!-- Form Section -->
       <div class="w-full md:w-2/3">
         <h1
-          class="text-3xl font-extrabold text-yellow-500 dark:text-yellow-400 text-center tracking-wide drop-shadow-lg"
+          class="text-3xl font-extrabold text-yellow-500 dark:text-yellow-400 text-center tracking-wide drop-shadow-lg mt-[-10px]"
           style="font-family: 'Poppins', sans-serif"
         >
           Create an Account.
         </h1>
-        <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form class="grid grid-cols-1 md:grid-cols-2 gap-6" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+
           <!-- Left Column -->
           <div class="space-y-4">
             <div>
@@ -152,7 +154,7 @@
             </button>
             <p class="text-sm text-gray-500 dark:text-gray-400 text-center mt-3">
               Already have an account?
-              <a href="#" class="text-blue-600 hover:underline dark:text-blue-500"
+              <a href="{% url 'student_login' %}" class="text-blue-600 hover:underline dark:text-blue-500"
                 >Login here</a
               >
             </p>
