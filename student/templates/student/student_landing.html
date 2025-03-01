@@ -23,8 +23,8 @@
             <div class="relative inline-block text-left">
                 <button id="dropdownButton" class="bg-blue-600 px-4 py-2 rounded-lg shadow-md hover:bg-blue-500 transition">Login</button>
                 <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-md shadow-lg overflow-hidden">
-                    <a href="" class="block px-4 py-2 text-white hover:bg-gray-700 transition">Admin Login</a>
-                    <a href="/login" class="block px-4 py-2 text-white hover:bg-gray-700 transition">Student Login</a>
+                    <a href="{% url 'admin_login' %}" class="block px-4 py-2 text-white hover:bg-gray-700 transition">Admin Login</a>
+                    <a href="{% url 'student_login' %}" class="block px-4 py-2 text-white hover:bg-gray-700 transition">Student Login</a>
                     <a href="/faculty/login" class="block px-4 py-2 text-white hover:bg-gray-700 transition">Faculty Login</a>
                 </div>
             </div>
@@ -35,7 +35,7 @@
     <section class="text-center py-20">
         <h2 class="text-4xl font-bold mb-4">AI-Powered Face Recognition</h2>
         <p class="text-lg text-gray-300 mb-6">Secure and seamless authentication using facial recognition technology.</p>
-        <a href="/register" class="bg-blue-500 px-6 py-3 rounded-lg text-lg shadow-md hover:bg-blue-400 transition">Get Started</a>
+        <a href="{% url 'student_registration' %}" class="bg-blue-500 px-6 py-3 rounded-lg text-lg shadow-md hover:bg-blue-400 transition">Get Started</a>
     </section>
     
     <!-- Features -->
