@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
-    'student'
+    'student',
 ]
 
 MIDDLEWARE = [
@@ -129,3 +129,12 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = ""
+
+AUTH_USER_MODEL = 'student.Student'
+
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_PORT=465
+EMAIL_USE_SSL=True
+EMAIL_HOST_USER="aravindrodiz700@gmail.com"
+EMAIL_HOST_PASSWORD="bble jcei zvcr txhm"
+
