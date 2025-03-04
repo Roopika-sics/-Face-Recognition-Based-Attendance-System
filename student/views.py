@@ -1,9 +1,15 @@
-from django.shortcuts import render,redirect
-from django.core.files.storage import FileSystemStorage
-from .models import Student
+from django.shortcuts import render,redirect,get_object_or_404
+from django.urls import reverse
+from .models import Student,PasswordReset
 from django.contrib import messages
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate,login,logout
+from django.core.mail import EmailMessage
+from django.conf import settings
+from django.utils import timezone
+from django.contrib.auth.hashers import make_password
+from django.http import HttpResponseRedirect
+
+
 
 
 def student_register(request):
@@ -51,12 +57,10 @@ def student_login(request):
             return render(request, 'student/login.html')
 
         user = authenticate(request, username=student_id, password=password)
-
-        print(f'USER: {user}')
-
         if user is not None:
             login(request, user)
-            return redirect('student/student_profile')
+            profile_url = reverse('student_profile', kwargs={'student_id': user.student_id})
+            return redirect(profile_url)
         else:
             messages.error(request, "Invalid Credentials!")
 
@@ -65,12 +69,104 @@ def student_login(request):
 
 def student_logout(request):
     logout(request)
-    return redirect("student/login.html")
+    return redirect("login.html")
 
 def student_profile(request, student_id):
-    student = Student.objects.filter(student_id=student_id).first()
+    student = get_object_or_404(Student, student_id=student_id)
     return render(request, 'student/student_profile.html', {'student': student})
 
 
 def student_landing_page(request):
     return render(request,'student/student_landing.html')
+
+
+def forget_password(request):
+    
+    if request.method =="POST":
+        email = request.POST.get('email')
+
+        try:
+            user = Student.objects.get(email=email)
+
+            new_password_reset = PasswordReset(user=user)
+            new_password_reset.save()
+
+            password_reset_url = reverse('reset-password', kwargs={'reset_id': new_password_reset.reset_id})
+
+            full_password_reset_url = f'{request.scheme}://{request.get_host()}{password_reset_url}'
+
+            email_body = f'Reset your password using the link below:\n\n\n{full_password_reset_url}'
+        
+
+            email_message = EmailMessage(
+                'Reset your password',
+                email_body,
+                settings.EMAIL_HOST_USER,
+                [email]
+            )
+
+            email_message.fail_silently = False
+            email_message.send()
+
+            return HttpResponseRedirect(reverse("password-reset-sent", kwargs={"reset_id": new_password_reset.reset_id}))
+        
+        except Student.DoesNotExist:
+            messages.error(request, f"No user with email '{email}' found")
+            return redirect('forgot-password')
+
+    return render(request,'student/forget_password.html')
+
+
+def password_reset_sent(request,reset_id):
+
+    if PasswordReset.objects.filter(reset_id=reset_id).exists():
+        return render(request, 'student/password_reset_sent.html')
+    else:
+        messages.error(request, 'Invalid reset id')
+        return redirect('forgot-password')
+
+
+def reset_password(request,reset_id):
+    
+    try:
+        password_reset_id = PasswordReset.objects.get(reset_id=reset_id)
+
+        if request.method == 'POST':
+            password = request.POST.get('password')
+            confirm_password = request.POST.get('confirm_password')
+
+            passwords_have_error = False
+
+            if password != confirm_password:
+                passwords_have_error = True
+                messages.error(request, 'Passwords do not match')
+            
+            expiration_time = password_reset_id.created_when + timezone.timedelta(minutes=10)
+
+            if timezone.now() > expiration_time:
+                passwords_have_error = True
+                messages.error(request, 'Reset link has expired')
+
+                password_reset_id.delete()
+
+            if not passwords_have_error:
+                user = password_reset_id.user
+                user.set_password(password)
+                user.save()
+
+                password_reset_id.delete()
+
+                messages.success(request, 'Password reset. Proceed to login')
+                return redirect('student_login')
+            
+            else:
+                return redirect('reset-password',reset_id=reset_id)
+
+    
+    
+    except PasswordReset.DoesNotExist:
+        
+        messages.error(request, 'Invalid reset id')
+        return redirect('forgot-password')
+
+    return render(request, 'student/reset_password.html',{'reset_id': reset_id})

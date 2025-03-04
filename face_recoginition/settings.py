@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
-    'student'
+    'student',
 ]
 
 MIDDLEWARE = [
@@ -128,7 +128,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = ""
 
 
-STATIC_URL = '/static/'
-import os
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "student/static")]
+# import os
 
+# STATIC_URL = "/static/"
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+# MEDIA_URL = "/media/"
+# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+
+AUTH_USER_MODEL = 'student.Student'
+
+
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_PORT=465
+EMAIL_USE_SSL=True
+EMAIL_HOST_USER="aravindrodiz700@gmail.com"
+EMAIL_HOST_PASSWORD="bble jcei zvcr txhm"
