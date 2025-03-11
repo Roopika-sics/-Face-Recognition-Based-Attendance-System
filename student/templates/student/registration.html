@@ -42,7 +42,6 @@
         >
           {% csrf_token %}
 
-          <!-- Left Column -->
           <div class="space-y-4">
             <div>
               <label
@@ -55,21 +54,6 @@
                 id="name"
                 name="name"
                 placeholder="Your Name"
-                class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white p-2.5"
-                required
-              />
-            </div>
-            <div>
-              <label
-                for="student-id"
-                class="block text-sm font-medium text-gray-900 dark:text-white"
-                >Student ID</label
-              >
-              <input
-                type="text"
-                id="student-id"
-                name="student-id"
-                placeholder="S123456"
                 class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white p-2.5"
                 required
               />
@@ -106,7 +90,7 @@
             </div>
           </div>
 
-          <!-- Right Column -->
+
           <div class="space-y-4">
             <div>
               <label
@@ -118,42 +102,65 @@
                 type="file"
                 id="photo"
                 name="photo"
+                accept="image/*"
                 class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white p-2.5"
               />
             </div>
+
+
             <div>
               <label
                 for="password"
                 class="block text-sm font-medium text-gray-900 dark:text-white"
                 >Password</label
               >
-              <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="••••••••"
-                class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white p-2.5"
-                required
-              />
+              <div class="relative">
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white p-2.5"
+                  required
+                  oninput="showEyeIcon('password', 'eye-icon-1')"
+                />
+                <span
+                  id="eye-icon-1"
+                  class="absolute inset-y-0 right-3 flex items-center text-sm cursor-pointer hidden"
+                  onclick="togglePassword('password')"
+                >
+                  👁️
+                </span>
+              </div>
             </div>
+
             <div>
               <label
                 for="confirm-password"
                 class="block text-sm font-medium text-gray-900 dark:text-white"
                 >Confirm Password</label
               >
-              <input
-                type="password"
-                id="confirm-password"
-                name="confirm-password"
-                placeholder="••••••••"
-                class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white p-2.5"
-                required
-              />
+              <div class="relative">
+                <input
+                  type="password"
+                  id="confirm-password"
+                  name="confirm-password"
+                  placeholder="••••••••"
+                  class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white p-2.5"
+                  required
+                  oninput="showEyeIcon('confirm-password', 'eye-icon-2')"
+                />
+                <span
+                  id="eye-icon-2"
+                  class="absolute inset-y-0 right-3 flex items-center text-sm cursor-pointer hidden"
+                  onclick="togglePassword('confirm-password')"
+                >
+                  👁️
+                </span>
+              </div>
             </div>
           </div>
 
-          <!-- Full-Width Register Button -->
           <div class="col-span-1 md:col-span-2 flex flex-col items-center">
             <button
               type="submit"
@@ -161,20 +168,31 @@
             >
               Register
             </button>
-
-            <p
-              class="text-sm text-gray-500 dark:text-gray-400 text-center mt-3"
-            >
-              Already have an account?
-              <a
-                href="{% url 'student_login' %}"
-                class="text-blue-600 hover:underline dark:text-blue-500"
-                >Login here</a
-              >
-            </p>
           </div>
         </form>
       </div>
     </div>
+
+    <script>
+      function togglePassword(id) {
+        const input = document.getElementById(id);
+        if (input.type === "password") {
+          input.type = "text";
+        } else {
+          input.type = "password";
+        }
+      }
+
+      function showEyeIcon(inputId, eyeId) {
+        const input = document.getElementById(inputId);
+        const eyeIcon = document.getElementById(eyeId);
+
+        if (input.value.length > 0) {
+          eyeIcon.classList.remove("hidden");
+        } else {
+          eyeIcon.classList.add("hidden");
+        }
+      }
+    </script>
   </body>
 </html>

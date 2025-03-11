@@ -144,3 +144,4 @@ EMAIL_PORT=465
 EMAIL_USE_SSL=True
 EMAIL_HOST_USER="aravindrodiz700@gmail.com"
 EMAIL_HOST_PASSWORD="bble jcei zvcr txhm"
+
