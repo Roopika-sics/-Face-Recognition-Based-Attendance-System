@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.urls import reverse
-from .models import Student,PasswordReset
+from .models import Student,PasswordReset,LeaveRequest
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 from django.core.mail import EmailMessage
@@ -8,6 +8,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 from django.http import HttpResponseRedirect
+from datetime import datetime
 
 
 
@@ -39,7 +40,7 @@ def student_register(request):
             password=make_password(password),  
             photo=photo
         )
-        print(f'student: {student}')
+
         student.save()
 
         messages.success(request, "Registration successful!")
@@ -59,6 +60,7 @@ def student_login(request):
         user = authenticate(request, username=student_id, password=password)
         if user is not None:
             login(request, user)
+            messages.success(request, "Login Successful!") 
             profile_url = reverse('student_profile', kwargs={'student_id': user.student_id})
             return redirect(profile_url)
         else:
@@ -69,7 +71,7 @@ def student_login(request):
 
 def student_logout(request):
     logout(request)
-    return redirect("login.html")
+    return redirect("student/student_landing_page")
 
 def student_profile(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
@@ -170,3 +172,66 @@ def reset_password(request,reset_id):
         return redirect('forgot-password')
 
     return render(request, 'student/reset_password.html',{'reset_id': reset_id})
+
+
+
+
+def apply_leave(request):
+
+    student = Student.objects.get(email=request.user.email)
+
+    if request.method == 'POST':
+        start_date = request.POST['start_date']
+        end_date = request.POST['end_date']
+        reason = request.POST['reason']
+
+
+        start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
+        end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
+
+
+        total_days = (end_date_obj - start_date_obj).days + 1
+
+
+        if student.leave_balance >= total_days:
+            student.leave_balance -= total_days
+            student.save()
+
+
+            leave_request = LeaveRequest(
+                student=student,
+                reason=reason,
+                start_date=start_date_obj,
+                end_date=end_date_obj,
+                status='Pending'
+            )
+
+            leave_request.save()
+
+            messages.success(request, f"Leave request submitted successfully. {total_days} day(s) leave deducted from your balance.")
+
+            profile_url = reverse('student_profile', kwargs={'student_id': student.student_id})
+            return redirect(profile_url)
+        else:
+            messages.error(request, f"You do not have enough leave balance. You requested {total_days} days but only have {student.leave_balance} days remaining.")
+            return redirect('apply_leave')
+
+    return render(request, 'student/apply_leave.html', {'student': student})
+
+
+def leave_status(request):
+    student = Student.objects.get(email=request.user.email)
+    leaves = LeaveRequest.objects.filter(student=student).order_by('-applied_on')
+    return render(request, 'student/leave_status.html', {'leaves': leaves})
+
+
+def calendar(request):
+    return render(request,'student/calendar.html')
+
+
+def about(request):
+    return render(request,'student/about_page.html')
+
+
+def contact(request):
+    return render(request,'student/contact.html')

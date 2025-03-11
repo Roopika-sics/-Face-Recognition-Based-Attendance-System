@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign Up</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
   </head>
   <body class="bg-gray-900 text-white">
     <section class="h-screen flex items-center justify-center">
@@ -24,11 +23,27 @@
 
           <!-- Right column with form -->
           <div class="md:w-8/12 lg:ms-6 lg:w-5/12">
-            <h2 class="text-3xl font-bold text-center mb-6 text-yellow-500">
+            <h2 class="text-3xl font-bold text-center mb-6 text-white-500">
               Sign In
             </h2>
+
             <form method="post" action="{% url 'student_login' %}">
-              {% csrf_token %}
+              {% csrf_token %} 
+              
+              {% if messages %}
+              <div class="mb-4">
+                {% for message in messages %}
+                <p
+                  id="success-message"
+                  class="p-3 rounded-lg text-center {% if message.tags == 'success' %} bg-green-500 text-white {% elif message.tags == 'error' %} bg-red-500 text-white {% endif %}"
+                >
+                  {{ message }}
+                </p>
+                {% endfor %}
+              </div>
+              {% endif %}
+
+              
               <!-- Email input -->
               <div class="relative mb-6">
                 <label for="student_id" class="block text-gray-400"
@@ -59,14 +74,12 @@
                 />
               </div>
 
-              
-
               <!-- Sign Up button -->
               <button
                 type="submit"
-                class="w-full px-4 py-2 rounded bg-yellow-500 text-black font-semibold hover:bg-yellow-600 transition duration-200"
+                class="w-full px-4 py-2 rounded bg-blue-500 text-black font-semibold hover:bg-blue-600 transition duration-200"
               >
-                Sign Up
+                Login
               </button>
 
               <p
@@ -95,5 +108,15 @@
         </div>
       </div>
     </section>
+    <script>
+      setTimeout(function () {
+        let messageBox = document.getElementById("success-message");
+        if (messageBox) {
+          messageBox.style.transition = "opacity 0.5s ease";
+          messageBox.style.opacity = "0";
+          setTimeout(() => messageBox.remove(), 500);
+        }
+      }, 1000);
+    </script>
   </body>
 </html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Management System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#4F46E5",
+            secondary: "#10B981",
+          },
+          borderRadius: {
+            button: "8px",
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    .table-container::-webkit-scrollbar {
+      height: 8px;
+    }
+    .table-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+    .table-container::-webkit-scrollbar-thumb {
+      background: #ddd;
+      border-radius: 4px;
+    }
+    .table-container::-webkit-scrollbar-thumb:hover {
+      background: #ccc;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+  <div class="min-h-screen">
+    <header class="bg-white shadow">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-semibold text-gray-900">Faculty Management</h1>
+            <div class="flex items-center space-x-2 text-sm text-gray-500 mt-1">
+              <span>Dashboard</span>
+              <i class="ri-arrow-right-s-line"></i>
+              <span>Faculties</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white shadow rounded-lg p-6">
+            
+            <!-- Success Messages -->
+            {% if messages %}
+              <div id="success-message" class="mb-4">
+                {% for message in messages %}
+                  <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                    {{ message }}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+    
+            <!-- Top Section: Search & Add Button -->
+            <div class="flex justify-between items-center mb-6">
+                <!-- Search Input -->
+                <div class="relative flex-1 w-full sm:max-w-xs">
+                    <input type="text" placeholder="Search faculty..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 flex items-center justify-center"></i>
+                </div>
+    
+                <!-- Add Faculty Button -->
+                <a href="{% url 'create_faculty' %}" class="bg-primary text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700 transition">
+                     Add Faculty
+                </a>
+            </div>
+    
+            <!-- Faculty Table -->
+            <div class="table-container overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+    
+                <tbody class="bg-white divide-y divide-gray-200">
+                  {% for faculty in faculties %}
+                  <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ faculty.username }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <div class="flex items-center space-x-3">
+                        
+                        <!-- View Button -->
+                        <a href="" class="text-blue-600 hover:text-blue-900 w-8 h-8 flex items-center justify-center cursor-pointer">
+                          <i class="ri-eye-line"></i>
+                        </a>
+    
+                        <!-- Delete Button -->
+                        <form action="" method="POST" class="inline">
+                          {% csrf_token %}
+                          <button type="submit" class="text-red-600 hover:text-red-900 w-8 h-8 flex items-center justify-center cursor-pointer">
+                            <i class="ri-delete-bin-line"></i>
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="2" class="text-center text-gray-500 py-4">No faculty members yet.</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+        </div>
+    </main>
+    
+  </div>
+  <script>
+    setTimeout(function() {
+      var successMessage = document.getElementById("success-message");
+      if (successMessage) {
+        successMessage.style.display = "none";
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

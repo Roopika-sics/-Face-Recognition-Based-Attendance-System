@@ -128,16 +128,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = ""
 
 
-# import os
+import os
 
-# STATIC_URL = "/static/"
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+MEDIA_URL = '/student_photos/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'student_photos')
 
-# MEDIA_URL = "/media/"
-# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 AUTH_USER_MODEL = 'student.Student'
+
 
 
 EMAIL_HOST="smtp.gmail.com"

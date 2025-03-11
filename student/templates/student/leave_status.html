@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leave Status</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1E3A8A"
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+    <div class="max-w-4xl mx-auto p-6">
+      <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">
+        Your Leave Requests
+      </h1>
+
+      {% if leaves %}
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-primary text-white">
+            <tr>
+              <th class="px-6 py-3 text-sm font-semibold">Start Date</th>
+              <th class="px-6 py-3 text-sm font-semibold">End Date</th>
+              <th class="px-6 py-3 text-sm font-semibold">Reason</th>
+              <th class="px-6 py-3 text-sm font-semibold">Applied On</th>
+              <th class="px-6 py-3 text-sm font-semibold">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for leave in leaves %}
+            <tr class="border-b border-gray-200">
+              <td class="px-6 py-4">{{ leave.start_date }}</td>
+              <td class="px-6 py-4">{{ leave.end_date }}</td>
+              <td class="px-6 py-4">{{ leave.reason }}</td>
+              <td class="px-6 py-4">{{ leave.applied_on|date:"M d, Y" }}</td>
+              <td class="px-6 py-4">
+                {% if leave.status == "Approved" %}
+                <span
+                  class="text-green-600 font-bold bg-green-100 px-2 py-1 rounded-lg"
+                >
+                  ✅ Approved
+                </span>
+                {% elif leave.status == "Declined" %}
+                <span
+                  class="text-red-600 font-bold bg-red-100 px-2 py-1 rounded-lg"
+                >
+                  ❌ Declined
+                </span>
+                {% else %}
+                <span
+                  class="text-yellow-600 font-bold bg-yellow-100 px-2 py-1 rounded-lg"
+                >
+                  ⏳ Pending
+                </span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-center text-gray-600">No leave requests found.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>
