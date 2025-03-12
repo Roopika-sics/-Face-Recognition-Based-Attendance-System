@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import uuid
+from django.utils.timezone import now
 
 class StudentManager(BaseUserManager):
     def create_user(self, student_id, email, password=None, **extra_fields):
@@ -26,9 +27,14 @@ class Student(AbstractBaseUser):
     email = models.EmailField(unique=True)
     department = models.CharField(max_length=100)
     photo = models.ImageField(upload_to='student_photos/')
+    leave_balance = models.PositiveIntegerField(default=10)
+
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False) 
 
     USERNAME_FIELD = 'student_id'
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = ['email','student_name']
 
     objects = StudentManager()
 
@@ -43,3 +49,20 @@ class PasswordReset(models.Model):
     def __str__(self):
         return f"Password reset for {self.user.username} at {self.created_when}"
 
+
+class LeaveRequest(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Approved', 'Approved'),
+        ('Declined', 'Declined')
+    ]
+
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    reason = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    applied_on = models.DateTimeField(default=now)
+
+    def __str__(self):
+        return f'{self.student.student_name} - {self.status}'
