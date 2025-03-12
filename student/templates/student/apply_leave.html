@@ -3,102 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Leave Application</title>
+    <title>Apply Leave</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#4F46E5',
-                        secondary: '#6B7280'
-                    },
-                    borderRadius: {
-                        'none': '0px',
-                        'sm': '4px',
-                        DEFAULT: '8px',
-                        'md': '12px',
-                        'lg': '16px',
-                        'xl': '20px',
-                        '2xl': '24px',
-                        '3xl': '32px',
-                        'full': '9999px',
-                        'button': '8px'
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        :where([class^="ri-"])::before { content: "\f3c2"; }
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            background: transparent;
-            bottom: 0;
-            color: transparent;
-            cursor: pointer;
-            height: auto;
-            left: 0;
-            position: absolute;
-            right: 0;
-            top: 0;
-            width: auto;
-        }
-    </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <div class="max-w-3xl mx-auto p-6">
-        <div class="bg-white shadow-lg rounded-lg p-8 mt-10">
-            <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Student Leave Application</h1>
-            
-            <form class="space-y-6" method="post" action="{% url 'apply_leave' %}">
+<body class="bg-gray-50">
 
-                {% csrf_token %}
+    <div class="flex min-h-screen">
 
-                <div class="space-y-4">
-                    <h2 class="text-xl font-semibold text-gray-700">Leave Duration</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                            <div class="relative">
-                                <input type="date" id="startDate" name="start_date" required
-                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-primary">
-                                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                                    <i class="ri-calendar-line text-gray-400"></i>
-                                </div>
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white shadow-lg fixed h-full">
+            <div class="p-4">
+                <h1 class="text-2xl text-primary">DASHBOARD</h1>
+            </div>
+            <nav class="mt-8">
+                <a href="{% url 'student_profile' student_id=request.user.id %}" class="flex items-center px-6 py-3 text-gray-700 bg-gray-100">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-dashboard-line"></i>
+                    </div>
+                    <span class="mx-3">Personal Details</span>
+                </a>
+                <a href="{% url 'calendar' %}" class="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-calendar-line"></i>
+                    </div>
+                    <span class="mx-3">Calendar</span>
+                </a>
+                <a href="{% url 'apply_leave' %}" class="flex items-center px-6 py-3 text-gray-700 bg-gray-200">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-time-line"></i>
+                    </div>
+                    <span class="mx-3">Apply Leave</span>
+                </a>
+                <a href="{% url 'leave_status' %}" class="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-file-chart-line"></i>
+                    </div>
+                    <span class="mx-3">Leave Status</span>
+                </a>
+            </nav>
+
+            <div class="p-4">
+                <a href="{% url 'student_login' %}" class="flex items-center px-6 py-3 text-gray-700 hover:bg-red-100 rounded-lg">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-logout-box-line text-red-500"></i>
+                    </div>
+                    <span class="mx-3 text-red-500 font-semibold">Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-64 p-6">
+            <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-8 mt-10">
+                <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Apply for Leave</h1>
+                
+                <form class="space-y-6" method="post" action="{% url 'apply_leave' %}">
+                    {% csrf_token %}
+
+                    <!-- Leave Duration -->
+                    <div class="space-y-4">
+                        <h2 class="text-xl font-semibold text-gray-700">Leave Duration</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                <input type="date" name="start_date" required class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-primary">
                             </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-                            <div class="relative">
-                                <input type="date" id="endDate" name="end_date" required
-                                    class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-primary">
-                                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                                    <i class="ri-calendar-line text-gray-400"></i>
-                                </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                <input type="date" name="end_date" required class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-primary">
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="space-y-4">
-                    <h2 class="text-xl font-semibold text-gray-700">Leave Details</h2>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Reason for Leave</label>
-                        <textarea id="reason" name="reason" rows="4" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded"></textarea>
+                    <!-- Leave Reason -->
+                    <div class="space-y-4">
+                        <h2 class="text-xl font-semibold text-gray-700">Leave Details</h2>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Reason for Leave</label>
+                            <textarea name="reason" rows="4" required class="w-full px-4 py-2 border border-gray-300 rounded"></textarea>
+                        </div>
                     </div>
 
-                </div>
-
-                <div class="flex justify-center space-x-4 pt-4">
-                    <button type="submit"
-                        class="px-6 py-2 bg-primary text-white rounded-button hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer whitespace-nowrap">
-                        Submit Application
-                    </button>
-                </div>
-            </form>
-        </div>
+                    <!-- Submit Button -->
+                    <div class="flex justify-center space-x-4 pt-4">
+                        <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                            Submit Application
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
     </div>
 
 </body>

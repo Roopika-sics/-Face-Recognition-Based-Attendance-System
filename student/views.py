@@ -78,6 +78,7 @@ def student_profile(request, student_id):
     return render(request, 'student/student_profile.html', {'student': student})
 
 
+
 def student_landing_page(request):
     return render(request,'student/student_landing.html')
 
@@ -226,7 +227,9 @@ def leave_status(request):
 
 
 def calendar(request):
-    return render(request,'student/calendar.html')
+    student = Student.objects.all()
+    print(student)
+    return render(request,'student/calendar.html',{'student': student})
 
 
 def about(request):
