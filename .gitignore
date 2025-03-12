@@ -1,0 +1,58 @@
+# General Python ignore patterns
+*.pyc
+*.pyo
+__pycache__/
+*.pyd
+
+# Django project
+*.log
+*.pot
+*.py[cod]
+db.sqlite3
+*.sqlite3
+.env
+migrations/*
+server/media
+# Exclude migrations but keep the folder itself
+!*/migrations/
+!*/migrations/__init__.py
+
+# Ignore IDE/editor-specific files
+.idea/
+.vscode/
+.DS_Store
+
+# Virtual environment
+venv/
+ai_phishing/
+*.env
+Pipfile
+Pipfile.lock
+
+# Logs
+logs/
+*.log
+
+# Ignore backups or local temp files
+*.swp
+*.swo
+*.bak
+*.tmp
+*.old
+
+# Ignore directories for all Django apps
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+
+# Ignore test coverage and debugging
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+.nox/
+pytestdebug.log
+
+#pickle files
+*.pkl
