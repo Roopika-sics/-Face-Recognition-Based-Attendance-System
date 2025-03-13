@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Status</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-lg fixed h-full">
+        <div class="p-4">
+            <h1 class="text-2xl text-primary">DASHBOARD</h1>
+        </div>
+        <nav class="mt-8">
+            <a href="{% url 'student_profile' student_id=request.user.id %}" class="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-dashboard-line"></i>
+                </div>
+                <span class="mx-3">Personal Details</span>
+            </a>
+            <a href="{% url 'calendar' %}" class="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-calendar-line"></i>
+                </div>
+                <span class="mx-3">Calendar</span>
+            </a>
+            <a href="{% url 'apply_leave' %}" class="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-time-line"></i>
+                </div>
+                <span class="mx-3">Apply Leave</span>
+            </a>
+            <a href="{% url 'leave_status' %}" class="flex items-center px-6 py-3 text-gray-700 bg-gray-100">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-file-chart-line"></i>
+                </div>
+                <span class="mx-3">Leave Status</span>
+            </a>
+        </nav>
+
+        <div class="p-4">
+            <a href="{% url 'student_login' %}" class="flex items-center px-6 py-3 text-gray-700 hover:bg-red-100 rounded-lg">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-logout-box-line text-red-500"></i>
+                </div>
+                <span class="mx-3 text-red-500 font-semibold">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-64 p-6">
+        <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl p-6">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">Your Leave Requests</h2>
+
+            {% if leaves %}
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead class="bg-blue-600 text-white">
+                        <tr>
+                            <th class="px-6 py-3 text-sm font-semibold">Start Date</th>
+                            <th class="px-6 py-3 text-sm font-semibold">End Date</th>
+                            <th class="px-6 py-3 text-sm font-semibold">Reason</th>
+                            <th class="px-6 py-3 text-sm font-semibold">Applied On</th>
+                            <th class="px-6 py-3 text-sm font-semibold">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700">
+                        {% for leave in leaves %}
+                        <tr class="border-b border-gray-200">
+                            <td class="px-6 py-4">{{ leave.start_date }}</td>
+                            <td class="px-6 py-4">{{ leave.end_date }}</td>
+                            <td class="px-6 py-4">{{ leave.reason }}</td>
+                            <td class="px-6 py-4">{{ leave.applied_on|date:"M d, Y" }}</td>
+                            <td class="px-6 py-4">
+                                {% if leave.status == "Approved" %}
+                                <span class="text-green-600 font-bold bg-green-100 px-2 py-1 rounded-lg">
+                                    ✅ Approved
+                                </span>
+                                {% elif leave.status == "Declined" %}
+                                <span class="text-red-600 font-bold bg-red-100 px-2 py-1 rounded-lg">
+                                    ❌ Declined
+                                </span>
+                                {% else %}
+                                <span class="text-yellow-600 font-bold bg-yellow-100 px-2 py-1 rounded-lg">
+                                    ⏳ Pending
+                                </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-center text-gray-600">No leave requests found.</p>
+            {% endif %}
+        </div>
+    </main>
+
+</body>
+</html>

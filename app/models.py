@@ -1,54 +1,38 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
+from django.shortcuts import render, redirect
+from django.contrib import messages
 
+class FacultyManager(models.Manager):
+    def create_faculty(self, faculty_id, email, password=None):
+        if not faculty_id:
+            raise ValueError("Faculty ID is required")
+        if not email:
+            raise ValueError("Email is required")
 
-class User(models.Model):
-    user_id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=20, null=False)
-    last_name = models.CharField(max_length=20, null=False)
-    email = models.CharField(max_length=20, null=False, unique=True)
-    password = models.CharField(max_length=20, null=False)
-
-    def __str__(self):
-        return f"{self.first_name} {self.last_name}"
-
-
+        faculty = self.model(faculty_id=faculty_id, email=email)
+        if password:
+            faculty.set_password(password)
+        faculty.save(using=self._db)
+        return faculty
 
 class Faculty(models.Model):
-    faculty_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    faculty_subject = models.CharField(max_length=20, null=False)
-    faculty_email = models.CharField(max_length=20, null=False, unique=True)
-
-    def __str__(self):
-        return f"{self.faculty_subject} - {self.user.first_name} {self.user.last_name}"
+    faculty_id = models.CharField(max_length=20, unique=True)
+    email = models.EmailField(unique=True)
+    faculty_name = models.CharField(max_length=100, blank=True, null=True)
+    department = models.CharField(max_length=100, blank=True, null=True)
+    password = models.CharField(max_length=128)
     
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    
+    objects = FacultyManager()
 
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
 
-class Face(models.Model):
-    face_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('User', on_delete=models.CASCADE)  # Assuming User model exists
-    image_path = models.CharField(max_length=320, null=False)
-    face_encoding = models.BinaryField(null=False)
-
-    def __str__(self):
-        return f"Face ID: {self.face_id} - User ID: {self.user.user_id}"
-
-
-class Attendance(models.Model):
-    STATUS_CHOICES = [
-        ('Present', 'Present'),
-        ('Absent', 'Absent'),
-        ('Late', 'Late'),
-    ]
-
-    attendance_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('User', on_delete=models.CASCADE)
-    date = models.DateField(null=False)
-    time_in = models.TimeField(null=False)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, null=False)
-
+    def check_password(self, raw_password):
+        return check_password(raw_password, self.password)
 
     def __str__(self):
-        return f"Attendance ID: {self.attendance_id} - User ID: {self.user.user_id} - Status: {self.status}"
-
-
+        return self.faculty_id

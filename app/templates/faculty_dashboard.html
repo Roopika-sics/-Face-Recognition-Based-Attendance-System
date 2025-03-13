@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Faculty Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#4F46E5",
+              secondary: "#10B981",
+            },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :where([class^="ri-"])::before {
+        content: "\f3c2";
+      }
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .hide-arrows::-webkit-inner-spin-button,
+      .hide-arrows::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <div class="flex h-screen">
+      <aside class="w-64 bg-white shadow-lg flex flex-col">
+        <div class="p-6 border-b">
+          <div class="flex items-center gap-4">
+            <div
+              class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center"
+            >
+              <i class="ri-user-line text-primary text-xl"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-800">User</h3>
+              <p class="text-sm text-gray-500">Department</p>
+            </div>
+          </div>
+        </div>
+        <nav class="flex-1 p-4">
+          <div class="space-y-2">
+            <a
+              href="#"
+              class="flex items-center gap-3 px-4 py-3 text-primary bg-primary/5 rounded-lg"
+            >
+              <i class="ri-dashboard-line"></i>
+              <span>Dashboard</span>
+            </a>
+            <a
+              href="{% url 'student_list' %}"
+              class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
+            >
+              <i class="ri-group-line"></i>
+              <span>Students</span>
+              <span
+                class="ml-auto bg-primary/10 text-primary px-2 py-0.5 rounded-full text-xs"
+                >{{ total_students }}</span
+              >
+            </a>
+            <a
+              href="#"
+              class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
+            >
+              <i class="ri-calendar-check-line"></i>
+              <span>Attendance</span>
+            </a>
+            <a
+              href="#"
+              class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
+            >
+              <i class="ri-calendar-event-line"></i>
+              <span>Leave Management</span>
+            </a>
+            <a
+              href="#"
+              class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
+            >
+              <i class="ri-calendar-line"></i>
+              <span>Calendar</span>
+            </a>
+          </div>
+        </nav>
+        <div class="p-4 border-t">
+          <button
+            class="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+          >
+            <i class="ri-logout-box-line"></i>
+            <a
+              href="{% url 'faculty_logout' %}"
+              class="btn btn-danger logout-btn"
+              >Logout</a
+            >
+          </button>
+        </div>
+      </aside>
+
+      <main class="flex-1 overflow-auto">
+        <div class="p-8">
+          <div class="mb-8">
+            <h1 class="text-2xl font-semibold text-gray-800">Welcome back</h1>
+          </div>
+
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          >
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+              <div class="flex items-center justify-between mb-4">
+                <div
+                  class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto"
+                >
+                  <i class="ri-group-line text-xl text-primary"></i>
+                </div>
+              </div>
+              <h3 class="text-2xl font-semibold text-gray-800">
+                {{ total_students }}
+              </h3>
+              <p class="text-gray-600">Total Students</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+              <div class="flex items-center justify-between mb-4">
+                <div
+                  class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto"
+                >
+                  <i class="ri-user-follow-line text-xl text-green-600"></i>
+                </div>
+              </div>
+              <h3 class="text-2xl font-semibold text-gray-800">38</h3>
+              <p class="text-gray-600">Present Today</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+              <div class="flex items-center justify-between mb-4">
+                <div
+                  class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mx-auto"
+                >
+                  <i class="ri-calendar-event-line text-xl text-yellow-600"></i>
+                </div>
+              </div>
+              <h3 class="text-2xl font-semibold text-gray-800">3</h3>
+              <p class="text-gray-600">Leave Requests</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+              <h3 class="text-lg font-semibold text-gray-800 mb-6">
+                Pending Approvals
+              </h3>
+              <div class="space-y-4">
+                {% for leave in leaves %}
+                <div class="p-4 border border-gray-100 rounded-lg">
+                  <div class="flex items-center gap-3 mb-2">
+                    <h4 class="font-medium text-gray-800">
+                      {{ leave.student.student_name }}
+                    </h4>
+                  </div>
+
+                  <p class="text-sm text-gray-600 mb-3">
+                    Leave request from
+                    <strong>{{ leave.start_date|date:"F d" }}</strong> to
+                    <strong>{{ leave.end_date|date:"F d" }}</strong>
+                  </p>
+
+                  <div class="flex gap-2">
+                    <form
+                      method="post"
+                      action=""
+                    >
+                      {% csrf_token %}
+                      <button
+                        type="submit"
+                        class="px-3 py-1.5 text-sm text-white bg-green-600 rounded-lg"
+                      >
+                        Approve
+                      </button>
+                    </form>
+
+                    <form
+                      method="post"
+                      action=""
+                    >
+                      {% csrf_token %}
+                      <button
+                        type="submit"
+                        class="px-3 py-1.5 text-sm text-white bg-red-600 rounded-lg"
+                      >
+                        Decline
+                      </button>
+                    </form>
+                  </div>
+                </div>
+                {% empty %}
+                <p class="text-gray-500">No pending leave requests.</p>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
