@@ -16,6 +16,8 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('apply_leave/', views.apply_leave, name='apply_leave'),
     path('leave_status/', views.leave_status, name='leave_status'),
+    path("get_events/", views.get_events, name="get_events"),
+    path('edit_profile/', views.edit_profile, name='edit_profile'),
 ]
 
 

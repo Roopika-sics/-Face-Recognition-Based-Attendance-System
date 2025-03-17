@@ -61,6 +61,32 @@
                 <form class="space-y-6" method="post" action="{% url 'apply_leave' %}">
                     {% csrf_token %}
 
+                    {% if messages %}
+                    <div class="max-w-lg mx-auto">
+                      {% for message in messages %}
+                      <div
+                        class="flex items-center gap-2 bg-red-600 text-white text-sm font-medium px-4 py-3 rounded-lg shadow-md mb-2"
+                      >
+                        <svg
+                          class="w-5 h-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                        <span>{{ message }}</span>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+
                     <!-- Leave Duration -->
                     <div class="space-y-4">
                         <h2 class="text-xl font-semibold text-gray-700">Leave Duration</h2>
@@ -87,7 +113,8 @@
 
                     <!-- Submit Button -->
                     <div class="flex justify-center space-x-4 pt-4">
-                        <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600">
+
                             Submit Application
                         </button>
                     </div>
@@ -95,6 +122,16 @@
             </div>
         </main>
     </div>
+    <script>
+        setTimeout(function () {
+          let alertMessages = document.querySelectorAll('.bg-red-600');
+          alertMessages.forEach(function (message) {
+            message.style.transition = 'opacity 0.5s ease';
+            message.style.opacity = '0';
+            setTimeout(() => message.remove(), 500);
+          });
+        }, 1000);
+      </script>
 
 </body>
 </html>

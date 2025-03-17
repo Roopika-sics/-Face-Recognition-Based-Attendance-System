@@ -19,4 +19,9 @@ urlpatterns = [
     path('faculty_dashboard/', views.faculty_dashboard, name='faculty_dashboard'),
     path('approve_leave/<int:leave_id>/', views.approve_leave, name='approve_leave'),
     path('decline_leave/<int:leave_id>/', views.decline_leave, name='decline_leave'),
+    path('faculty_calendar/', views.faculty_calendar, name='faculty_calendar'),
+    path('get_events/', views.get_events, name='get_events'),
+    path("add_event/", views.add_event, name="add_event"),
+    path("delete_event/<int:event_id>/", views.delete_event, name="delete_event"),
+
 ]

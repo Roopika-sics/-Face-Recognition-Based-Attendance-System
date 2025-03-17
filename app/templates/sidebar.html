@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Dashboard{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background: #f4f6f9;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .sidebar {
+            height: 100vh;
+            background: #343a40;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            width: 250px;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: background 0.3s;
+        }
+        .sidebar a:hover, .sidebar .active {
+            background: #495057;
+        }
+        .content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .dark-mode {
+            background: #222 !important;
+            color: #fff !important;
+        }
+        .dark-mode .sidebar {
+            background: #111 !important;
+        }
+        .dark-mode .card {
+            background: #333 !important;
+            color: white !important;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h3>Admin Dashboard</h3>
+        <a href="{% url 'dashboard' %}" class="{% if request.path == '/dashboard/' %}active{% endif %}">🏠 Dashboard</a>
+        <a href="{% url 'student_list' %}" class="{% if request.path == '/students/' %}active{% endif %}">📚 Manage Students</a>
+        <a href="{% url 'faculty_list' %}" class="{% if request.path == '/faculty/' %}active{% endif %}">📚 Manage Faculty</a>
+        <a href="#">📊 Attendance</a>
+        <a href="#">📝 Leave</a>
+        <a href="#">📅 Calendar</a>
+        <a href="#">🏆 Rewards</a>
+        <a href="#">📑 Reports</a>
+
+        <!-- Dark Mode Toggle -->
+        <div class="toggle-container mt-3">
+            <button id="darkModeToggle" class="btn btn-sm btn-outline-light">🌙 Dark Mode</button>
+        </div>
+
+        <!-- Logout Button -->
+        <a href="{% url 'admin_logout' %}" class="btn btn-danger mt-4 w-100">Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Dark Mode Script -->
+    <script>
+        const darkModeToggle = document.getElementById("darkModeToggle");
+        const body = document.body;
+        
+        if (localStorage.getItem("darkMode") === "enabled") {
+            body.classList.add("dark-mode");
+            darkModeToggle.textContent = "☀️ Light Mode";
+        }
+
+        darkModeToggle.addEventListener("click", () => {
+            body.classList.toggle("dark-mode");
+            localStorage.setItem("darkMode", body.classList.contains("dark-mode") ? "enabled" : "disabled");
+            darkModeToggle.textContent = body.classList.contains("dark-mode") ? "☀️ Light Mode" : "🌙 Dark Mode";
+        });
+    </script>
+</body>
+</html>

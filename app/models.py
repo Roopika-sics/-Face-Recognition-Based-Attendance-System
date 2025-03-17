@@ -36,3 +36,12 @@ class Faculty(models.Model):
 
     def __str__(self):
         return self.faculty_id
+    
+class Event(models.Model):
+    title = models.CharField(max_length=200)
+    start = models.DateTimeField()
+    description = models.TextField(blank=True, null=True)
+    color = models.CharField(max_length=7, default="#337BFF")
+
+    def __str__(self):
+        return self.title

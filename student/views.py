@@ -7,10 +7,29 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
-from django.http import HttpResponseRedirect
-from datetime import datetime
+from django.http import HttpResponseRedirect, JsonResponse
+from datetime import datetime,date
+from app.models import Event
+import re
 
 
+
+def validate_password(password):
+
+    errors = []
+    
+    if len(password) < 8:
+        errors.append("Password must be at least 8 characters long.")
+    if not re.search(r"[A-Z]", password):
+        errors.append("Password must contain at least one uppercase letter.")
+    if not re.search(r"[a-z]", password):
+        errors.append("Password must contain at least one lowercase letter.")
+    if not re.search(r"\d", password):
+        errors.append("Password must contain at least one number.")
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        errors.append("Password must contain at least one special character.")
+    
+    return errors
 
 
 def student_register(request):
@@ -25,6 +44,12 @@ def student_register(request):
 
         if password != confirm_password:
             messages.error(request, "Passwords do not match!")
+            return redirect('student_registration')
+        
+        password_errors = validate_password(password)
+        if password_errors:
+            for error in password_errors:
+                messages.error(request, error)
             return redirect('student_registration')
 
         if Student.objects.filter(student_id=student_id).exists() or Student.objects.filter(email=email).exists():
@@ -178,44 +203,64 @@ def reset_password(request,reset_id):
 
 
 def apply_leave(request):
-
-    student = Student.objects.get(email=request.user.email)
+    student = get_object_or_404(Student, email=request.user.email)
 
     if request.method == 'POST':
-        start_date = request.POST['start_date']
-        end_date = request.POST['end_date']
-        reason = request.POST['reason']
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        reason = request.POST.get('reason')
 
+        # Validate input dates
+        try:
+            start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
+        except ValueError:
+            messages.error(request, "Invalid date format. Please select a valid date.")
+            return redirect('apply_leave')
 
-        start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
-        end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
+        # Prevent selecting past dates
+        if start_date_obj < date.today():
+            messages.error(request, "Start date cannot be in the past.")
+            return redirect('apply_leave')
 
+        if end_date_obj < start_date_obj:
+            messages.error(request, "End date cannot be before the start date.")
+            return redirect('apply_leave')
 
+        # Calculate total leave days
         total_days = (end_date_obj - start_date_obj).days + 1
 
+        # Check if leave already applied for the same dates
+        existing_leave = LeaveRequest.objects.filter(
+            student=student,
+            start_date__lte=end_date_obj,
+            end_date__gte=start_date_obj
+        ).exists()
 
-        if student.leave_balance >= total_days:
-            student.leave_balance -= total_days
-            student.save()
-
-
-            leave_request = LeaveRequest(
-                student=student,
-                reason=reason,
-                start_date=start_date_obj,
-                end_date=end_date_obj,
-                status='Pending'
-            )
-
-            leave_request.save()
-
-            messages.success(request, f"Leave request submitted successfully. {total_days} day(s) leave deducted from your balance.")
-
-            profile_url = reverse('student_profile', kwargs={'student_id': student.student_id})
-            return redirect(profile_url)
-        else:
-            messages.error(request, f"You do not have enough leave balance. You requested {total_days} days but only have {student.leave_balance} days remaining.")
+        if existing_leave:
+            messages.error(request, "You have already applied for leave on the selected dates.")
             return redirect('apply_leave')
+
+        # Check leave balance
+        if student.leave_balance < total_days:
+            messages.error(request, f"You only have {student.leave_balance} leave days remaining.")
+            return redirect('apply_leave')
+
+        # Deduct leave balance and save leave request
+        student.leave_balance -= total_days
+        student.save()
+
+        LeaveRequest.objects.create(
+            student=student,
+            reason=reason,
+            start_date=start_date_obj,
+            end_date=end_date_obj,
+            status='Pending'
+        )
+
+        messages.success(request, f"Leave request submitted successfully. {total_days} day(s) leave deducted from your balance.")
+
+        return redirect(reverse('student_profile', kwargs={'student_id': student.student_id}))
 
     return render(request, 'student/apply_leave.html', {'student': student})
 
@@ -230,6 +275,45 @@ def calendar(request):
     student = Student.objects.all()
     print(student)
     return render(request,'student/calendar.html',{'student': student})
+
+
+
+def get_events(request):
+    events = Event.objects.all()
+    event_list = [
+        {
+            "id": event.id,
+            "title": event.title,
+            "start": event.start.strftime("%Y-%m-%dT%H:%M:%S"),
+            "description": event.description,
+            "color": event.color if event.color else "#3b82f6",
+        }
+        for event in events
+    ]
+    return JsonResponse(event_list, safe=False)
+
+
+
+def edit_profile(request):
+    student = Student.objects.get(email=request.user.email)
+
+    if request.method == 'POST':
+        student_id = request.POST.get('student_id')
+        student_name = request.POST.get('name')
+        department = request.POST.get('department')
+        email = request.POST.get('email')
+
+        student.student_id = student_id
+        student.student_name = student_name
+        student.department = department
+        student.email = email
+        student.save()
+
+        messages.success(request, "Profile updated successfully!")
+        profile_url = reverse('student_profile', kwargs={'student_id': student.student_id})
+        return redirect(profile_url)
+
+    return render(request, 'student/edit_profile.html', {'user': student})
 
 
 def about(request):

@@ -1,10 +1,5 @@
-{% extends 'student/base.html' %}
-
-{% block title %}About FaceID Pro - Advanced Face Recognition Solutions{% endblock %}
-
-{% block content %}
-
-{% load static %}
+{% extends 'student/base.html' %} {% block title %}About FaceID Pro - Advanced
+Face Recognition Solutions{% endblock %} {% block content %} {% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -112,7 +107,6 @@
             </div>
           </div>
 
-
           <div class="space-y-4">
             <div>
               <label
@@ -128,7 +122,6 @@
                 class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white p-2.5"
               />
             </div>
-
 
             <div>
               <label
@@ -182,6 +175,32 @@
               </div>
             </div>
           </div>
+
+          {% if messages %}
+          <div class="max-w-lg mx-auto">
+            {% for message in messages %}
+            <div
+              class="flex items-center gap-2 bg-red-600 text-white text-sm font-medium px-4 py-3 rounded-lg shadow-md mb-2"
+            >
+              <svg
+                class="w-5 h-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+              <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
 
           <div class="col-span-1 md:col-span-2 flex flex-col items-center">
             <button

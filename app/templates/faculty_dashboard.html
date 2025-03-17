@@ -105,7 +105,7 @@
               <span>Leave Management</span>
             </a>
             <a
-              href="#"
+              href="{% url 'faculty_calendar' %}"
               class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
             >
               <i class="ri-calendar-line"></i>
@@ -198,7 +198,7 @@
                   <div class="flex gap-2">
                     <form
                       method="post"
-                      action=""
+                      action="{% url 'approve_leave' leave.id %}"
                     >
                       {% csrf_token %}
                       <button
@@ -211,7 +211,7 @@
 
                     <form
                       method="post"
-                      action=""
+                      action="{% url 'decline_leave' leave.id %}"
                     >
                       {% csrf_token %}
                       <button

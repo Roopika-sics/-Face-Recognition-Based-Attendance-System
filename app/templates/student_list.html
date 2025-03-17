@@ -107,7 +107,7 @@
                     </a>
 
                     <!-- Delete Button -->
-                    <form action="{% url 'delete_student' student.id %}" method="POST" class="inline">
+                    <form action="{% url 'delete_student' student.id %}" method="POST" class="inline" onsubmit="return confirmDelete()">
                       {% csrf_token %}
                       <button type="submit" class="text-red-600 hover:text-red-900 w-8 h-8 flex items-center justify-center cursor-pointer">
                         <i class="ri-delete-bin-line"></i>
@@ -130,6 +130,13 @@
         successMessage.style.display = "none";
       }
     }, 1000);
+
+    function confirmDelete() {
+        return confirm("Are you sure you want to delete?");
+    }
   </script>
 </body>
 </html>
+
+
+

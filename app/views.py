@@ -4,9 +4,11 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from student.models import Student,LeaveRequest
-from django.http import HttpResponseForbidden
-from django.contrib.auth.hashers import make_password
-from .models import Faculty
+from django.http import HttpResponseForbidden, JsonResponse
+# from django.contrib.auth.hashers import make_password
+from .models import Faculty,Event
+import json
+from datetime import datetime
 
 
 #Admin 
@@ -132,14 +134,14 @@ def approve_leave(request, leave_id):
     leave.status = 'Approved'
     leave.save()
     messages.success(request, 'Leave request approved!')
-    return redirect('leave_requests')
+    return redirect('faculty_dashboard')
 
 def decline_leave(request, leave_id):
     leave = get_object_or_404(LeaveRequest, id=leave_id)
     leave.status = 'Declined'
     leave.save()
     messages.error(request, 'Leave request declined!')
-    return redirect('leave_requests')
+    return redirect('faculty_dashboard')
 
 
 @login_required(login_url='/')
@@ -153,3 +155,61 @@ def dashboard(request):
 
 
 
+
+
+
+def faculty_calendar(request):
+    return render(request,'faculty_calendar.html')
+
+
+
+def get_events(request):
+    events = Event.objects.all()
+    
+    event_list = []
+    for event in events:
+        print(f"Event: {event.title}, Start: {event.start}, Color: {event.color}")
+        
+        event_list.append({
+            "id": event.id,
+            "title": event.title,
+            "start": event.start.strftime("%Y-%m-%dT%H:%M:%S"),
+            "description": event.description,
+            "color": event.color,
+            "backgroundColor": event.color,
+            "borderColor": event.color,
+        })
+    
+    return JsonResponse(event_list, safe=False)
+
+
+
+
+def add_event(request):
+    if request.method == "POST":
+        title = request.POST.get("title")
+        start = request.POST.get("start_date")
+        color = request.POST.get("color","#337BFF")
+        description = request.POST.get("description")
+
+
+        start = datetime.strptime(start, "%Y-%m-%dT%H:%M")
+
+        # Save event
+        Event.objects.create(
+            title=title,
+            start=start,
+            color = color,
+            description=description
+        )
+        return redirect("faculty_calendar")
+
+    return render(request, "add_event.html")
+
+
+def delete_event(request, event_id):
+    if request.method == "DELETE":
+        event = get_object_or_404(Event, id=event_id)
+        event.delete()
+        return JsonResponse({"message": "Event deleted!"})
+    return JsonResponse({"error": "Invalid request"}, status=400)
